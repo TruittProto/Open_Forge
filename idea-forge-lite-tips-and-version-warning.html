@@ -1,0 +1,1020 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>IDEA FORGE LITE // WebGPU</title>
+<!-- Chart.js Library for Data Visualization -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<style>
+  :root{
+    /* Default Terminal Green Theme */
+    --bg:            #030402;
+    --bg-panel:      #080b07;
+    --bg-well:       #050704;
+    --border:        #15261a;
+    --border-bright: #234a2c;
+    --text-dim:      #2e4e34;
+    --text:          #3f6b47;
+    --text-bright:   #6ea378;
+    --text-brightest:#a9d6ad;
+    --ember:         #c1440e;
+    --ember-bright:  #ff7a35;
+    --ember-dim:     #5c260f;
+    --danger:        #8a2e1f;
+    --scanline:      rgba(63,107,71,0.035);
+    --vignette:      rgba(0,0,0,0.65);
+    --mono: 'JetBrains Mono', 'IBM Plex Mono', 'Courier New', monospace;
+  }
+
+  /* --- THEMES --- */
+  body.theme-light {
+    --bg:            #f4f5f5;
+    --bg-panel:      #ffffff;
+    --bg-well:       #eaecec;
+    --border:        #d1d5db;
+    --border-bright: #9ca3af;
+    --text-dim:      #6b7280;
+    --text:          #374151;
+    --text-bright:   #111827;
+    --text-brightest:#000000;
+    --ember:         #ea580c;
+    --ember-bright:  #f97316;
+    --ember-dim:     #c2410c;
+    --danger:        #dc2626;
+    --scanline:      rgba(0,0,0,0.04);
+    --vignette:      rgba(255,255,255,0.4);
+  }
+
+  body.theme-gray {
+    --bg:            #1c1c1c;
+    --bg-panel:      #242424;
+    --bg-well:       #161616;
+    --border:        #333333;
+    --border-bright: #555555;
+    --text-dim:      #777777;
+    --text:          #aaaaaa;
+    --text-bright:   #dddddd;
+    --text-brightest:#ffffff;
+    --ember:         #d4a373;
+    --ember-bright:  #faedcd;
+    --ember-dim:     #a98467;
+    --danger:        #e07a5f;
+    --scanline:      rgba(255,255,255,0.02);
+    --vignette:      rgba(0,0,0,0.7);
+  }
+
+  body.theme-darkblue {
+    --bg:            #0b1121;
+    --bg-panel:      #111827;
+    --bg-well:       #030712;
+    --border:        #1f2937;
+    --border-bright: #3b82f6;
+    --text-dim:      #60a5fa;
+    --text:          #93c5fd;
+    --text-bright:   #bfdbfe;
+    --text-brightest:#eff6ff;
+    --ember:         #f59e0b;
+    --ember-bright:  #fbbf24;
+    --ember-dim:     #b45309;
+    --danger:        #ef4444;
+    --scanline:      rgba(147,197,253,0.03);
+    --vignette:      rgba(0,0,0,0.75);
+  }
+
+  body.theme-purple {
+    --bg:            #1a1025;
+    --bg-panel:      #231533;
+    --bg-well:       #140b1f;
+    --border:        #3b2854;
+    --border-bright: #8b5cf6;
+    --text-dim:      #a78bfa;
+    --text:          #c4b5fd;
+    --text-bright:   #ddd6fe;
+    --text-brightest:#f5f3ff;
+    --ember:         #ec4899;
+    --ember-bright:  #f472b6;
+    --ember-dim:     #831843;
+    --danger:        #f43f5e;
+    --scanline:      rgba(139,92,246,0.03);
+    --vignette:      rgba(0,0,0,0.75);
+  }
+
+  body.theme-lightgreen {
+    --bg:            #f0fdf4;
+    --bg-panel:      #ffffff;
+    --bg-well:       #dcfce7;
+    --border:        #bbf7d0;
+    --border-bright: #4ade80;
+    --text-dim:      #166534;
+    --text:          #14532d;
+    --text-bright:   #064e3b;
+    --text-brightest:#022c22;
+    --ember:         #ea580c;
+    --ember-bright:  #f97316;
+    --ember-dim:     #9a3412;
+    --danger:        #dc2626;
+    --scanline:      rgba(22,101,52,0.03);
+    --vignette:      rgba(255,255,255,0.4);
+  }
+
+  body.theme-matrix {
+    --bg:            #000000;
+    --bg-panel:      rgba(3, 15, 6, 0.88);
+    --bg-well:       rgba(1, 8, 3, 0.92);
+    --border:        #003b0e;
+    --border-bright: #00ff41;
+    --text-dim:      #008f11;
+    --text:          #00ff41;
+    --text-bright:   #50ff7b;
+    --text-brightest:#d0ffd8;
+    --ember:         #00ff41;
+    --ember-bright:  #66ff8f;
+    --ember-dim:     #005c18;
+    --danger:        #ff3333;
+    --scanline:      rgba(0, 255, 65, 0.04);
+    --vignette:      rgba(0, 0, 0, 0.85);
+  }
+
+  body.theme-amber {
+    --bg:            #0d0900;
+    --bg-panel:      #171000;
+    --bg-well:       #0a0700;
+    --border:        #3a2600;
+    --border-bright: #ff9d00;
+    --text-dim:      #8f5c00;
+    --text:          #dca032;
+    --text-bright:   #ffb833;
+    --text-brightest:#fff0d0;
+    --ember:         #ff6600;
+    --ember-bright:  #ff8533;
+    --ember-dim:     #803300;
+    --danger:        #ff3333;
+    --scanline:      rgba(255, 157, 0, 0.035);
+    --vignette:      rgba(0,0,0,0.7);
+  }
+
+  *{ box-sizing:border-box; }
+  html,body{ height:100%; }
+  body{
+    margin:0;
+    background:var(--bg);
+    color:var(--text);
+    font-family:var(--mono);
+    min-height:100vh;
+    position:relative;
+    overflow-x:hidden;
+    transition: background 0.3s, color 0.3s;
+  }
+
+  /* Matrix Canvas Overlay */
+  #matrixCanvas {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100vw; height: 100vh;
+    pointer-events: none;
+    z-index: 0;
+    display: none;
+  }
+  body.theme-matrix #matrixCanvas { display: block; }
+
+  body::before{
+    content:'';
+    position:fixed; inset:0;
+    pointer-events:none;
+    background: repeating-linear-gradient(to bottom, var(--scanline) 0px, var(--scanline) 1px, transparent 1px, transparent 3px);
+    z-index:50;
+  }
+  body::after{
+    content:'';
+    position:fixed; inset:0;
+    pointer-events:none;
+    background: radial-gradient(ellipse at 50% 40%, transparent 55%, var(--vignette) 100%);
+    z-index:49;
+  }
+
+  .wrap{
+    max-width:1400px;
+    margin:0 auto;
+    padding:28px 20px 60px;
+    position:relative;
+    z-index:1;
+  }
+
+  header{
+    display:flex;
+    align-items:flex-end;
+    justify-content:space-between;
+    gap:20px;
+    border-bottom:1px solid var(--border);
+    padding-bottom:18px;
+    margin-bottom:22px;
+    flex-wrap:wrap;
+  }
+  .brand{ display:flex; align-items:center; gap:14px; }
+  .brand svg{ width:34px; height:34px; flex-shrink:0; }
+  .brand h1{
+    margin:0; font-size:22px; letter-spacing:0.18em;
+    color:var(--text-brightest); text-shadow:0 0 10px rgba(110,163,120,0.35); font-weight:700;
+  }
+  .brand p{
+    margin:2px 0 0; font-size:11px; letter-spacing:0.12em;
+    color:var(--text-dim); text-transform:uppercase;
+  }
+
+  .conn{
+    display:flex; align-items:center; gap:8px;
+    font-size:11px; letter-spacing:.08em; color:var(--text-dim); text-transform:uppercase;
+  }
+  .dot{
+    width:8px; height:8px; border-radius:50%;
+    background:var(--danger); box-shadow:0 0 6px var(--danger); flex-shrink:0;
+  }
+  .dot.online{ background:var(--text-bright); box-shadow:0 0 8px var(--text-bright); }
+  .dot.checking{ background:var(--ember); box-shadow:0 0 8px var(--ember); }
+
+  .setup-overlay{
+    position:fixed; inset:0; z-index:100;
+    background:rgba(0,0,0,.82);
+    display:flex; align-items:center; justify-content:center; padding:20px;
+    overflow-y: auto;
+  }
+  .setup-overlay.hidden{ display:none; }
+  .setup-card{
+    width:min(580px,100%);
+    background:var(--bg-panel);
+    border:1px solid var(--border-bright);
+    box-shadow:0 0 40px rgba(0,0,0,.7);
+    margin: auto;
+  }
+  .setup-head{
+    padding:22px 24px 16px; border-bottom:1px solid var(--border);
+    display: flex; justify-content: space-between; align-items: flex-start;
+  }
+  .setup-head h2{ margin:0 0 6px; color:var(--text-brightest); font-size:17px; letter-spacing:.14em; text-transform:uppercase; }
+  .setup-head p{ margin:0; color:var(--text-dim); font-size:11px; line-height:1.6; }
+  .setup-body{ padding:20px 24px 24px; }
+  
+  /* Progress Bar Styles */
+  .progress-container {
+    margin-top: 14px;
+    background: var(--bg-well);
+    border: 1px solid var(--border);
+    height: 18px;
+    position: relative;
+    overflow: hidden;
+    display: none;
+  }
+  .progress-container.active { display: block; }
+  .progress-bar {
+    background: var(--ember);
+    height: 100%;
+    width: 0%;
+    transition: width 0.2s ease;
+  }
+  .progress-text {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 9.5px;
+    color: var(--text-brightest);
+    letter-spacing: 0.08em;
+  }
+
+  .setup-status{
+    margin-top:12px; padding:10px 12px; border:1px solid var(--border);
+    color:var(--text-dim); font-size:11px; line-height:1.5;
+  }
+  .setup-status.good{ color:var(--text-bright); border-color:var(--border-bright); }
+  .setup-status.bad{ color:var(--danger); border-color:var(--danger); }
+
+  /* Info / Guide Box inside Setup */
+  .setup-guide {
+    margin-top: 16px;
+    border: 1px solid var(--border);
+    background: var(--bg-well);
+    padding: 12px 14px;
+  }
+  .setup-guide h3 {
+    margin: 0 0 8px;
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    color: var(--text-bright);
+    text-transform: uppercase;
+  }
+  .setup-guide ul {
+    margin: 0;
+    padding-left: 16px;
+    font-size: 11px;
+    color: var(--text-dim);
+    line-height: 1.6;
+  }
+  .setup-guide li {
+    margin-bottom: 4px;
+  }
+
+  .setup-actions{ display:flex; justify-content:flex-end; gap:10px; margin-top:20px; }
+  .setup-btn{
+    background:transparent; border:1px solid var(--border); color:var(--text);
+    font-family:var(--mono); font-size:10px; letter-spacing:.08em; text-transform:uppercase; padding:9px 13px; cursor:pointer;
+  }
+  .setup-btn:hover{ border-color:var(--border-bright); color:var(--text-bright); }
+  .setup-btn.primary{ background:var(--ember-dim); border-color:var(--ember); color:var(--bg-panel); }
+  .setup-btn.primary:hover{ background:var(--ember); }
+  .setup-btn:disabled{ opacity:.45; cursor:not-allowed; }
+
+  .settings{
+    display:flex; gap:14px; flex-wrap:wrap; align-items:center;
+    margin-bottom:26px; padding:12px 14px; background:var(--bg-panel); border:1px solid var(--border);
+  }
+  .settings label{ font-size:10px; letter-spacing:.1em; text-transform:uppercase; color:var(--text-dim); display:block; margin-bottom:4px; }
+  .field{ display:flex; flex-direction:column; }
+  .settings select{
+    background:var(--bg-well); border:1px solid var(--border); color:var(--text-bright);
+    font-family:var(--mono); font-size:12px; padding:7px 9px; min-width:180px; outline:none;
+  }
+  .settings select:focus{ border-color:var(--border-bright); }
+
+  /* 2-COLUMN LAYOUT (Raw Material & Output) */
+  .grid{ display:grid; grid-template-columns: 1fr 1fr; gap:16px; }
+  @media (max-width:1000px){ .grid{ grid-template-columns: 1fr; } }
+
+  .panel{
+    background:var(--bg-panel); border:1px solid var(--border);
+    display:flex; flex-direction:column; min-height:500px; position: relative;
+  }
+  .panel-head{
+    display:flex; align-items:center; justify-content:space-between;
+    padding:10px 14px; border-bottom:1px solid var(--border);
+  }
+  .panel-head h2{ margin:0; font-size:11px; letter-spacing:.14em; text-transform:uppercase; color:var(--text-dim); font-weight:600; }
+  .panel-head .count{ font-size:10px; color:var(--text-dim); }
+
+  .dropzone{
+    margin:12px 14px 0; border:1px dashed var(--border-bright);
+    padding:10px 12px; font-size:11px; color:var(--text-dim);
+    text-align:center; cursor:pointer; letter-spacing:.05em;
+  }
+  .dropzone:hover{ background:rgba(63,107,71,0.06); color:var(--text-bright); border-color:var(--text-bright); }
+  .dropzone input{ display:none; }
+
+  .chips{ display:flex; flex-wrap:wrap; gap:6px; padding:0 14px; margin-top:10px; }
+  .chip{
+    display:flex; align-items:center; gap:6px; background:var(--bg-well);
+    border:1px solid var(--border); color:var(--text-bright); font-size:11px; padding:4px 8px; max-width:220px;
+  }
+  .chip span.name{ overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .chip button{ background:none; border:none; color:var(--text-dim); cursor:pointer; font-size:12px; padding:0; }
+  .chip button:hover{ color:var(--ember-bright); }
+
+  textarea#ore{
+    flex:1; resize:none; background:transparent; border:none;
+    color:var(--text-bright); font-family:var(--mono); font-size:13px;
+    line-height:1.55; padding:14px; outline:none; min-height:260px;
+  }
+  textarea#ore::placeholder{ color:var(--text-dim); }
+
+  .input-footer{
+    display:flex; align-items:center; justify-content:space-between;
+    padding:10px 14px; border-top:1px solid var(--border); gap:10px; flex-wrap:wrap;
+  }
+  .modes{ display:flex; gap:6px; flex-wrap:wrap; }
+  .mode-btn{
+    background:transparent; border:1px solid var(--border); color:var(--text-dim);
+    font-family:var(--mono); font-size:10.5px; letter-spacing:.08em; text-transform:uppercase; padding:6px 10px; cursor:pointer;
+  }
+  .mode-btn.active{ color:var(--text-brightest); border-color:var(--text-bright); background:var(--border); }
+  .mode-btn:hover:not(.active){ color:var(--text-bright); border-color:var(--border-bright); }
+
+  .forge-btn{
+    position:relative; background:var(--ember-dim); border:1px solid var(--ember);
+    color:var(--bg-panel); font-family:var(--mono); font-weight:700;
+    font-size:12px; letter-spacing:.12em; text-transform:uppercase; padding:9px 18px; cursor:pointer;
+  }
+  .forge-btn:hover:not(:disabled){ background:var(--ember); box-shadow:0 0 16px rgba(193,68,14,0.55); }
+  .forge-btn:disabled{ opacity:.5; cursor:not-allowed; }
+
+  .out-actions{ display:flex; gap:8px; align-items:center; }
+  .btn-ghost2{
+    background:none; border:1px solid var(--border); color:var(--text-dim);
+    font-family:var(--mono); font-size:10px; letter-spacing:.08em; text-transform:uppercase; padding:4px 8px; cursor:pointer;
+  }
+  .btn-ghost2:hover{ color:var(--text-bright); border-color:var(--border-bright); }
+
+  #output{
+    flex:1; padding:16px; font-size:13px; line-height:1.7;
+    color:var(--text-bright); white-space:pre-wrap; overflow-y:auto; max-height:520px;
+  }
+  #output .placeholder{ color:var(--text-dim); }
+  #output .cursor{
+    display:inline-block; width:8px; height:14px; background:var(--text-bright);
+    margin-left:2px; vertical-align:middle; animation:blink 1s step-end infinite;
+  }
+  @keyframes blink{ 50%{ opacity:0; } }
+
+  .note{
+    margin-top:22px; font-size:11px; color:var(--text-dim); line-height:1.6;
+    border-left:2px solid var(--border-bright); padding-left:12px;
+  }
+  .err{ color:var(--danger); }
+  .footer-credit { text-align: right; font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--text-dim); margin-top: 30px; }
+
+  /* Toast Notification */
+  .toast-container { position: fixed; bottom: 20px; right: 20px; display: flex; flex-direction: column; gap: 10px; z-index: 1000; pointer-events: none; }
+  .toast {
+    background: var(--bg-panel); border: 1px solid var(--border-bright); color: var(--text-brightest);
+    padding: 12px 18px; font-family: var(--mono); font-size: 11px; letter-spacing: 0.08em;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.6); opacity: 0; transform: translateY(10px); transition: opacity 0.3s ease, transform 0.3s ease; pointer-events: auto;
+    max-width: 360px; line-height: 1.5;
+  }
+  .toast.show { opacity: 1; transform: translateY(0); }
+
+  ::-webkit-scrollbar{ width:9px; }
+  ::-webkit-scrollbar-track{ background:var(--bg-well); }
+  ::-webkit-scrollbar-thumb{ background:var(--border-bright); }
+</style>
+</head>
+<body>
+
+  <canvas id="matrixCanvas"></canvas>
+
+  <div class="setup-overlay" id="setupOverlay">
+    <div class="setup-card">
+      <div class="setup-head">
+        <div>
+          <h2>Idea Forge // WebGPU Setup</h2>
+          <p id="setupDesc">Initialize WebLLM browser engine. Models run locally via your GPU.</p>
+        </div>
+      </div>
+      <div class="setup-body">
+        <div class="setup-guide">
+          <h3>Quick Guide & Usage Tips</h3>
+          <ul>
+            <li><strong>Start here:</strong> Choose a model in the WebGPU Model dropdown, then select <em>Load WebGPU Model</em>. Keep this tab open while the model initializes.</li>
+            <li><strong>First-time load:</strong> The browser downloads model files and caches them. This can take several minutes and use significant disk space, RAM, and GPU memory.</li>
+            <li><strong>Pick a model carefully:</strong> Start with a 1.5B–3B model if unsure. 7B–9B models need more memory; 14B models may fail or run very slowly on many systems.</li>
+            <li><strong>Raw Material:</strong> Paste notes or drop `.txt`, `.md`, `.json`, `.csv`, or `.log` files into the left panel. Keep inputs focused and reasonably short.</li>
+            <li><strong>Modes:</strong> Choose Summary, Essay, Outline, Code, Chart, or Chat before clicking <em>Forge</em>. Chat keeps a conversation history until cleared.</li>
+            <li><strong>Important — Lite vs Full:</strong> This Lite file runs a browser-based WebGPU model (WebLLM) and does <strong>not</strong> connect to Ollama. The full Idea Forge version supports Ollama and can use models served by your local Ollama installation. They are different runtimes.</li>
+            <li><strong>Privacy:</strong> Model inference runs on your device, but this page loads its runtime and Chart.js from online CDNs and must download model files on first use. Avoid claiming the page makes no network requests at all.</li>
+          </ul>
+        </div>
+        
+        <div class="progress-container" id="progressContainer">
+          <div class="progress-bar" id="progressBar"></div>
+          <div class="progress-text" id="progressText">0%</div>
+        </div>
+
+        <div class="setup-status" id="setupStatus">Choose a model that fits your GPU memory, then load it. Larger models need substantially more VRAM and may fail on some browsers/devices.</div>
+        <div class="setup-actions">
+          <button class="setup-btn primary" id="initEngineBtn">Load WebGPU Model</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+<div class="wrap">
+
+  <header>
+    <div class="brand">
+      <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M24 4 C 24 4, 30 14, 26 20 C 32 18, 36 24, 32 30 C 38 28, 40 36, 32 40 C 20 46, 8 38, 10 28 C 12 26, 12 20, 18 18 C 16 14, 20 6, 24 4Z"
+          fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/>
+        <path d="M24 12 C 24 12, 27 18, 25 21 C 28 20, 30 24, 27 28 C 22 32, 17 27, 19 22 C 20 20, 21 16, 24 12Z"
+          fill="currentColor" opacity="0.6"/>
+      </svg>
+      <div>
+        <h1>IDEA&nbsp;FORGE&nbsp;LITE</h1>
+        <p>browser-native webgpu llm</p>
+      </div>
+    </div>
+    <div class="conn">
+      <span class="dot" id="connDot"></span>
+      <span id="connLabel">engine offline</span>
+    </div>
+  </header>
+
+  <div class="settings">
+    <div class="field">
+      <label for="modelSelect">WebGPU Model</label>
+      <select id="modelSelect">
+        <optgroup label="General / Instruction — Lightweight">
+          <option value="gemma-2-2b-it-q4f32_1-MLC">Gemma 2 (2B)</option>
+          <option value="Llama-3.2-3B-Instruct-q4f32_1-MLC">Llama 3.2 (3B)</option>
+          <option value="Phi-3.5-mini-instruct-q4f32_1-MLC">Phi-3.5 Mini</option>
+          <option value="Qwen2.5-1.5B-Instruct-q4f32_1-MLC">Qwen 2.5 (1.5B)</option>
+        </optgroup>
+        <optgroup label="General / Instruction — Heavier">
+          <option value="gemma-2-9b-it-q4f32_1-MLC">Gemma 2 (9B) — High memory</option>
+          <option value="Llama-3.1-8B-Instruct-q4f32_1-MLC">Llama 3.1 (8B) — High memory</option>
+          <option value="Mistral-7B-Instruct-v0.3-q4f32_1-MLC">Mistral 7B v0.3</option>
+          <option value="Qwen2.5-14B-Instruct-q4f16_1-MLC">Qwen 2.5 (14B) — Very high memory</option>
+          <option value="Qwen2.5-7B-Instruct-q4f16_1-MLC">Qwen 2.5 (7B)</option>
+          <option value="Hermes-3-Llama-3.1-8B-q4f16_1-MLC">Hermes 3 (Llama 3.1 8B)</option>
+        </optgroup>
+        <optgroup label="Coding Specialists — Heavier">
+          <option value="Qwen2.5-Coder-7B-Instruct-q4f32_1-MLC">Qwen2.5 Coder (7B)</option>
+          <option value="Qwen2.5-Coder-14B-Instruct-q4f16_1-MLC">Qwen2.5 Coder (14B) — Very high memory</option>
+          <option value="Qwen2.5-Coder-1.5B-Instruct-q4f32_1-MLC">Qwen2.5 Coder (1.5B)</option>
+          <option value="Codellama-7b-Instruct-hf-q4f32_1-MLC">CodeLlama (7B)</option>
+        </optgroup>
+      </select>
+    </div>
+
+    <div class="field">
+      <label for="themeSelect">Theme</label>
+      <select id="themeSelect">
+        <option value="default">Terminal Green</option>
+        <option value="theme-matrix">Matrix Rain (Animated)</option>
+        <option value="theme-amber">Amber Phosphor</option>
+        <option value="theme-light">Light Mode</option>
+        <option value="theme-gray">Carbon Gray</option>
+        <option value="theme-darkblue">Deep Blue</option>
+        <option value="theme-purple">Deep Purple</option>
+        <option value="theme-lightgreen">Mint Green</option>
+      </select>
+    </div>
+
+    <div class="field">
+      <label for="tipsSelect">Tips & Help</label>
+      <select id="tipsSelect">
+        <option value="" disabled selected>💡 Select a Tip...</option>
+        <option value="howToUse">How to Use Idea Forge</option>
+        <option value="loading">Model Loading & Caching</option>
+        <option value="fileTypes">Supported File Types</option>
+        <option value="privacy">Privacy & WebGPU</option>
+        <option value="modes">Mode Differences</option>
+        <option value="models">Choosing a Model</option>
+        <option value="performance">Performance & Memory</option>
+        <option value="troubleshooting">Troubleshooting</option>
+        <option value="prompts">Better Prompts</option>
+        <option value="chat">Using Chat Mode</option>
+        <option value="charts">Charts & Data</option>
+        <option value="export">Copying & Exporting</option>
+        <option value="liteVsFull">WARNING: Lite vs Full Version</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="grid">
+    <!-- PANEL 1: INPUT -->
+    <div class="panel">
+      <div class="panel-head">
+        <h2>Raw Material</h2>
+        <span class="count" id="wordCount">0 words</span>
+      </div>
+
+      <div class="dropzone" id="dropzone">
+        drop text files here, or click to add
+        <input type="file" id="fileInput" multiple accept=".txt,.md,.json,.csv,.log">
+      </div>
+      <div class="chips" id="chips"></div>
+
+      <textarea id="ore" placeholder="Dump your thoughts, notes, or prompts here..."></textarea>
+
+      <div class="input-footer">
+        <div class="modes" id="modes">
+          <button class="mode-btn active" data-mode="summary">Summary</button>
+          <button class="mode-btn" data-mode="essay">Essay</button>
+          <button class="mode-btn" data-mode="outline">Outline</button>
+          <button class="mode-btn" data-mode="code">Code 💻</button>
+          <button class="mode-btn" data-mode="chart" style="color: #60a5fa; border-color: var(--border-bright);">Chart 📊</button>
+          <button class="mode-btn" data-mode="chat" style="color: var(--text-brightest); border-color: var(--border-bright);">Chat 💬</button>
+        </div>
+        <button class="forge-btn" id="forgeBtn" disabled>Forge ⚒</button>
+      </div>
+    </div>
+
+    <!-- PANEL 2: OUTPUT -->
+    <div class="panel">
+      <div class="panel-head">
+        <h2>Tempered Output</h2>
+        <div class="out-actions">
+          <button class="btn-ghost2" id="copyBtn">Copy</button>
+          <button class="btn-ghost2" id="downloadBtn">Download</button>
+          <button class="btn-ghost2" id="clearBtn">Clear</button>
+        </div>
+      </div>
+      <div id="output"><span class="placeholder">Load engine and forge output will appear here.</span></div>
+    </div>
+  </div>
+
+  <p class="note">
+    <strong>IDEA FORGE LITE NOTICE:</strong> This version runs browser-side using WebLLM and WebGPU; it does not include the full version's Ollama integration. The full Idea Forge version supports Ollama for models served by your local Ollama installation. Lite requires a compatible browser/WebGPU device and downloads its runtime/model files; first-time setup may be slow and model compatibility varies by hardware.
+  </p>
+
+  <div class="footer-credit">Truitt Prototyping</div>
+
+</div>
+
+<div class="toast-container" id="toastContainer"></div>
+
+<!-- Load WebLLM via ESM Module -->
+<script type="module">
+  import * as webllm from "https://esm.run/@mlc-ai/web-llm";
+
+  const $ = (id) => document.getElementById(id);
+  const connDot = $('connDot');
+  const connLabel = $('connLabel');
+  const setupOverlay = $('setupOverlay');
+  const setupStatus = $('setupStatus');
+  const initEngineBtn = $('initEngineBtn');
+  const progressContainer = $('progressContainer');
+  const progressBar = $('progressBar');
+  const progressText = $('progressText');
+  const modelSelect = $('modelSelect');
+  const themeSelect = $('themeSelect');
+  const tipsSelect = $('tipsSelect');
+  const dropzone = $('dropzone');
+  const fileInput = $('fileInput');
+  const chipsEl = $('chips');
+  const ore = $('ore');
+  const wordCount = $('wordCount');
+  const modesEl = $('modes');
+  const forgeBtn = $('forgeBtn');
+  const output = $('output');
+  const copyBtn = $('copyBtn');
+  const downloadBtn = $('downloadBtn');
+  const clearBtn = $('clearBtn');
+
+  let engine = null;
+  let files = [];
+  let mode = 'summary';
+  let generating = false;
+  let chatHistory = [];
+  let activeChart = null;
+
+  function setConn(state, label) {
+    connDot.className = 'dot ' + (state || '');
+    connLabel.textContent = label;
+  }
+
+  function showToast(message, duration = 4500) {
+    const container = $('toastContainer');
+    const toast = document.createElement('div');
+    toast.className = 'toast';
+    toast.textContent = message;
+    container.appendChild(toast);
+    requestAnimationFrame(() => toast.classList.add('show'));
+    setTimeout(() => {
+      toast.classList.remove('show');
+      toast.addEventListener('transitionend', () => toast.remove());
+    }, duration);
+  }
+
+  // Handle Tips Ribbon Selection
+  const tipContents = {
+    howToUse: "📌 QUICK START: Choose a model, click Load WebGPU Model, and wait for the engine to finish. Enter a prompt or add supported files, select a mode, then click Forge. Use Clear to reset the output and chat history.",
+    loading: "⚡ MODEL LOADING: The first load downloads model weights and caches them in browser storage. Keep the tab open and avoid refreshing during initialization. Later loads may be faster, but browser cache/storage can be cleared.",
+    fileTypes: "📁 FILES: Supported extensions are .txt, .md, .json, .csv, and .log. File contents are read into the page and combined with your text. Large files can use lots of memory; check the imported text before submitting sensitive material.",
+    privacy: "🔒 PRIVACY & NETWORK: Inference runs locally in your browser using WebGPU after the model is loaded. This HTML still downloads WebLLM and Chart.js from online CDNs, and the model must be downloaded. Do not describe the page as making zero network requests.",
+    modes: "🛠 MODES: Summary condenses material; Essay expands it into prose; Outline organizes headings and subpoints; Code drafts code; Chart asks for JSON data to render; Chat is for follow-up conversation. Review generated results before relying on them.",
+    models: "🧠 MODEL CHOICE: Start with Gemma 2 2B, Llama 3.2 3B, Phi-3.5 Mini, or Qwen 2.5 1.5B if you are unsure. Try a 7B–9B model only with plenty of available GPU memory. The 14B options are very demanding and may fail to initialize. Model names alone do not guarantee quality or speed.",
+    performance: "⚙️ PERFORMANCE: Close GPU-heavy tabs/apps, plug in your laptop, and start with a smaller model. Larger models need more VRAM/RAM and storage; browser or GPU limits can cause errors or a frozen-looking tab. Let initialization finish before clicking Forge.",
+    troubleshooting: "🧰 TROUBLESHOOTING: If loading fails, try a current browser with WebGPU support, select a smaller model, close other GPU-heavy apps, and reload the page. Model files may need to download again if browser storage was cleared. If a model repeatedly fails, it may not be compatible with your device/browser.",
+    prompts: "✍️ BETTER PROMPTS: Be specific about the task, audience, length, and format. Example: 'Summarize these notes in 5 bullets and list any unanswered questions.' For code, state the language, goal, constraints, and any error message. Treat output as a draft and verify facts and code.",
+    chat: "💬 CHAT MODE: Type your message in Raw Material and click Forge. Follow up in the same mode to continue the conversation. Clear resets the conversation history. If you switch to Chat, use the input box for your new message rather than expecting the prior mode's prompt to carry over.",
+    charts: "📊 CHART MODE: Provide clearly labeled categories and numerical values when possible. The model must return valid JSON for the chart to render, so generated charts may fail if the response is malformed. Verify estimated or invented data before using it.",
+    export: "📤 COPY & EXPORT: Copy puts the output text on your clipboard. Download saves a text file, or JSON in Chart mode. Clear resets the visible output and chat history; it does not uninstall the model.",
+    liteVsFull: "⚠️ IMPORTANT — LITE VS FULL: This specific Lite HTML uses WebLLM with WebGPU inside the browser; it does not use Ollama. The full Idea Forge version supports Ollama, which lets you connect to models running through your local Ollama service. Lite depends on browser/WebGPU compatibility and browser storage, while the full version's Ollama workflow requires Ollama to be installed and running. This file's engine is WebLLM, not Transformers.js; a Transformers.js build would also be browser-based but is a different runtime. Do not assume Lite has Ollama features."
+  };
+
+  tipsSelect.addEventListener('change', (e) => {
+    const val = e.target.value;
+    if (tipContents[val]) {
+      showToast(tipContents[val]);
+    }
+    tipsSelect.selectedIndex = 0;
+  });
+
+  // Initialize WebLLM Engine with Progress Bar
+  initEngineBtn.addEventListener('click', async () => {
+    const selectedModel = modelSelect.value;
+    setupStatus.textContent = 'Initializing WebGPU engine...';
+    progressContainer.classList.add('active');
+    initEngineBtn.disabled = true;
+    setConn('checking', 'loading model...');
+
+    try {
+      engine = await webllm.CreateMLCEngine(selectedModel, {
+        initProgressCallback: (progress) => {
+          setupStatus.textContent = progress.text;
+          if (typeof progress.progress === 'number' && !isNaN(progress.progress)) {
+            const percent = Math.round(progress.progress * 100);
+            progressBar.style.width = percent + '%';
+            progressText.textContent = percent + '%';
+          }
+        }
+      });
+      setupOverlay.classList.add('hidden');
+      setConn('online', 'engine ready');
+      forgeBtn.disabled = false;
+      showToast('WebGPU Engine initialized successfully!');
+    } catch (err) {
+      console.error(err);
+      setupStatus.className = 'setup-status bad';
+      setupStatus.textContent = 'Failed to load model: ' + err.message + '. Ensure your browser supports WebGPU.';
+      initEngineBtn.disabled = false;
+      setConn('', 'error');
+    }
+  });
+
+  // Matrix Rain Animation
+  const matrixCanvas = $('matrixCanvas');
+  const matrixCtx = matrixCanvas ? matrixCanvas.getContext('2d') : null;
+  let matrixAnimId = null;
+  let matrixDrops = [];
+  const matrixChars = '0123456789ABCDEF';
+  const matrixFontSize = 14;
+
+  function resizeMatrix() {
+    if (!matrixCanvas) return;
+    matrixCanvas.width = window.innerWidth;
+    matrixCanvas.height = window.innerHeight;
+    matrixDrops = Array(Math.floor(matrixCanvas.width / matrixFontSize)).fill(1);
+  }
+
+  function drawMatrix() {
+    if (!matrixCtx) return;
+    matrixCtx.fillStyle = 'rgba(0, 0, 0, 0.05)';
+    matrixCtx.fillRect(0, 0, matrixCanvas.width, matrixCanvas.height);
+    matrixCtx.fillStyle = '#00ff41';
+    matrixCtx.font = matrixFontSize + 'px monospace';
+
+    for (let i = 0; i < matrixDrops.length; i++) {
+      const char = matrixChars.charAt(Math.floor(Math.random() * matrixChars.length));
+      matrixCtx.fillText(char, i * matrixFontSize, matrixDrops[i] * matrixFontSize);
+      if (matrixDrops[i] * matrixFontSize > matrixCanvas.height && Math.random() > 0.975) matrixDrops[i] = 0;
+      matrixDrops[i]++;
+    }
+    matrixAnimId = requestAnimationFrame(drawMatrix);
+  }
+
+  function toggleMatrixRain(active) {
+    if (active) {
+      if (!matrixAnimId) { resizeMatrix(); drawMatrix(); }
+    } else if (matrixAnimId) {
+      cancelAnimationFrame(matrixAnimId);
+      matrixAnimId = null;
+      if (matrixCtx) matrixCtx.clearRect(0, 0, matrixCanvas.width, matrixCanvas.height);
+    }
+  }
+
+  themeSelect.addEventListener('change', (e) => {
+    const val = e.target.value;
+    document.body.className = val === 'default' ? '' : val;
+    toggleMatrixRain(val === 'theme-matrix');
+  });
+
+  // Files & Word Count
+  function updateCount() {
+    const text = ore.value.trim();
+    const n = text ? text.split(/\s+/).length : 0;
+    wordCount.textContent = n + ' word' + (n === 1 ? '' : 's');
+  }
+  ore.addEventListener('input', updateCount);
+
+  dropzone.addEventListener('click', () => fileInput.click());
+  fileInput.addEventListener('change', async (e) => {
+    for (const f of Array.from(e.target.files)) {
+      const text = await f.text();
+      files.push({ name: f.name, content: text });
+    }
+    renderChips();
+    fileInput.value = '';
+  });
+
+  function renderChips() {
+    chipsEl.innerHTML = '';
+    files.forEach((f, i) => {
+      const chip = document.createElement('div');
+      chip.className = 'chip';
+      chip.innerHTML = `<span class="name">${f.name}</span>`;
+      const btn = document.createElement('button');
+      btn.textContent = '×';
+      btn.addEventListener('click', () => { files.splice(i, 1); renderChips(); });
+      chip.appendChild(btn);
+      chipsEl.appendChild(chip);
+    });
+  }
+
+  // Modes
+  modesEl.addEventListener('click', (e) => {
+    const btn = e.target.closest('.mode-btn');
+    if (!btn) return;
+    modesEl.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    mode = btn.dataset.mode;
+    if (activeChart) { activeChart.destroy(); activeChart = null; }
+    if (mode === 'chat') {
+      output.innerHTML = '<span class="placeholder">Chat mode active. Type your message below.</span>';
+    } else if (mode === 'chart') {
+      output.innerHTML = '<span class="placeholder">Provide data/notes for chart generation.</span>';
+    } else {
+      output.innerHTML = '<span class="placeholder">Forged output appears here.</span>';
+    }
+  });
+
+  function buildPrompt() {
+    let material = ore.value.trim();
+    if (files.length) {
+      const fileText = files.map(f => '--- ' + f.name + ' ---\n' + f.content).join('\n\n');
+      material = material ? material + '\n\n' + fileText : fileText;
+    }
+
+    const instructions = {
+      summary: 'Provide a clear, well-organized summary of the following material:',
+      essay: 'Turn the following material into a coherent essay with a clear structure:',
+      outline: 'Convert the following material into a structured outline with main themes and sub-points:',
+      code: 'Write clean, efficient code based on the following request / material:',
+      chart: 'Read the raw material or request below and extract or estimate realistic data for a visual chart/graph. Respond ONLY with valid, raw JSON (no markdown block wrappers, no text explanations, no preamble). Format your JSON exactly like this:\n{\n  "type": "bar",\n  "title": "Chart Title",\n  "labels": ["Category A", "Category B", "Category C"],\n  "datasets": [\n    {\n      "label": "Dataset 1",\n      "data": [10, 25, 40]\n    }\n  ]\n}\nNote: "type" can be "bar", "line", "pie", "doughnut", or "radar".'
+    };
+
+    return (instructions[mode] || 'Process the following material:') + '\n\n"""\n' + material + '\n"""';
+  }
+
+  // Chart Rendering Logic via Chart.js
+  function renderChartFromJSON(jsonText) {
+    try {
+      let cleanJson = jsonText.replace(/```json/gi, '').replace(/```/g, '').trim();
+      const firstBrace = cleanJson.indexOf('{');
+      const lastBrace = cleanJson.lastIndexOf('}');
+      if (firstBrace !== -1 && lastBrace !== -1) {
+        cleanJson = cleanJson.substring(firstBrace, lastBrace + 1);
+      }
+
+      const config = JSON.parse(cleanJson);
+
+      output.innerHTML = '<div style="position: relative; width: 100%; height: 380px; padding: 10px;"><canvas id="chartCanvas"></canvas></div>';
+      const ctx = document.getElementById('chartCanvas').getContext('2d');
+
+      if (activeChart) {
+        activeChart.destroy();
+        activeChart = null;
+      }
+
+      const defaultColors = [
+        'rgba(110, 163, 120, 0.75)',
+        'rgba(193, 68, 14, 0.75)',
+        'rgba(59, 130, 246, 0.75)',
+        'rgba(139, 92, 246, 0.75)',
+        'rgba(245, 158, 11, 0.75)',
+        'rgba(236, 72, 153, 0.75)',
+        'rgba(16, 185, 129, 0.75)'
+      ];
+
+      const borderColors = defaultColors.map(c => c.replace('0.75', '1'));
+      const chartType = (config.type || 'bar').toLowerCase();
+
+      const datasets = (config.datasets || []).map((ds, idx) => ({
+        label: ds.label || 'Data',
+        data: ds.data || [],
+        backgroundColor: (chartType === 'pie' || chartType === 'doughnut') ? defaultColors : defaultColors[idx % defaultColors.length],
+        borderColor: (chartType === 'pie' || chartType === 'doughnut') ? borderColors : borderColors[idx % borderColors.length],
+        borderWidth: 1.5
+      }));
+
+      const isPieOrDoughnut = chartType === 'pie' || chartType === 'doughnut';
+
+      activeChart = new Chart(ctx, {
+        type: chartType,
+        data: {
+          labels: config.labels || [],
+          datasets: datasets
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            title: {
+              display: !!config.title,
+              text: config.title || '',
+              color: getComputedStyle(document.body).getPropertyValue('--text-brightest') || '#fff',
+              font: { family: 'monospace', size: 14 }
+            },
+            legend: {
+              labels: {
+                color: getComputedStyle(document.body).getPropertyValue('--text-bright') || '#ccc',
+                font: { family: 'monospace' }
+              }
+            }
+          },
+          scales: isPieOrDoughnut ? {} : {
+            x: { 
+              ticks: { color: getComputedStyle(document.body).getPropertyValue('--text-dim') || '#888', font: { family: 'monospace' } },
+              grid: { color: getComputedStyle(document.body).getPropertyValue('--border') || '#333' }
+            },
+            y: { 
+              ticks: { color: getComputedStyle(document.body).getPropertyValue('--text-dim') || '#888', font: { family: 'monospace' } },
+              grid: { color: getComputedStyle(document.body).getPropertyValue('--border') || '#333' }
+            }
+          }
+        }
+      });
+    } catch (e) {
+      output.innerHTML = '<span class="err">Could not parse valid JSON for chart output. Raw model response below:</span>\n\n' + jsonText;
+    }
+  }
+
+  // Generation via WebLLM
+  forgeBtn.addEventListener('click', async () => {
+    if (!engine || generating) return;
+    const material = ore.value.trim() || files.length;
+    if (!material) {
+      output.innerHTML = '<span class="err">Please enter some text or add a file first.</span>';
+      return;
+    }
+
+    generating = true;
+    forgeBtn.textContent = 'Forging...';
+    output.textContent = '';
+
+    const cursor = document.createElement('span');
+    cursor.className = 'cursor';
+    output.appendChild(cursor);
+
+    try {
+      if (mode === 'chat') {
+        chatHistory.push({ role: 'user', content: ore.value.trim() });
+        ore.value = '';
+        updateCount();
+
+        output.innerHTML = '';
+        const resStream = await engine.chat.completions.create({
+          messages: chatHistory,
+          stream: true,
+        });
+
+        let fullReply = '';
+        for await (const chunk of resStream) {
+          const delta = chunk.choices[0]?.delta?.content || '';
+          fullReply += delta;
+          output.textContent = fullReply;
+          output.appendChild(cursor);
+          output.scrollTop = output.scrollHeight;
+        }
+        chatHistory.push({ role: 'assistant', content: fullReply });
+      } else {
+        const prompt = buildPrompt();
+        const resStream = await engine.chat.completions.create({
+          messages: [{ role: 'user', content: prompt }],
+          stream: true,
+        });
+
+        let fullText = '';
+        for await (const chunk of resStream) {
+          const delta = chunk.choices[0]?.delta?.content || '';
+          fullText += delta;
+          output.textContent = fullText;
+          output.appendChild(cursor);
+          output.scrollTop = output.scrollHeight;
+        }
+        
+        if (cursor.parentNode) cursor.remove();
+
+        if (mode === 'chart') {
+          renderChartFromJSON(fullText);
+        }
+      }
+      if (cursor.parentNode) cursor.remove();
+    } catch (err) {
+      if (cursor.parentNode) cursor.remove();
+      output.innerHTML = '<span class="err">Generation error: ' + err.message + '</span>';
+    } finally {
+      generating = false;
+      forgeBtn.textContent = 'Forge ⚒';
+      showToast('Generation complete');
+    }
+  });
+
+  copyBtn.addEventListener('click', () => {
+    if (activeChart) {
+      showToast('Cannot copy interactive chart directly as text. Use Download.');
+      return;
+    }
+    navigator.clipboard.writeText(output.textContent);
+    showToast('Copied to clipboard');
+  });
+
+  downloadBtn.addEventListener('click', () => {
+    const blob = new Blob([output.textContent], { type: mode === 'chart' ? 'application/json' : 'text/plain' });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = mode === 'chart' ? 'idea-forge-chart.json' : 'idea-forge-output.txt';
+    a.click();
+  });
+
+  clearBtn.addEventListener('click', () => {
+    if (activeChart) {
+      activeChart.destroy();
+      activeChart = null;
+    }
+    output.innerHTML = '<span class="placeholder">Forged output appears here.</span>';
+    chatHistory = [];
+  });
+</script>
+</body>
+</html>
